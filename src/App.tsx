@@ -27,6 +27,7 @@ import { NotificationDrawer } from './components/NotificationDrawer';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { ChangeAdminPasswordModal } from './components/ChangeAdminPasswordModal';
 import { getAdminSession, saveAdminSession, clearAdminSession } from './utils/auth';
+import { useInstitutionProfile } from './data/institution';
 import {
   auth,
   saveItemToFirestore,
@@ -61,6 +62,9 @@ interface ToastState {
 }
 
 export default function App() {
+  // Identitas lembaga aktif (dapat diubah dari halaman Pengaturan Pengguna)
+  const institution = useInstitutionProfile();
+
   // Navigation & Role State
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -837,7 +841,7 @@ export default function App() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">Pengaturan Khusus Admin</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Halaman Pengaturan Pengguna, konfigurasi Firebase, dan manajemen basis data SMKN 6 Tebo hanya dapat diakses oleh Admin Sarpras.
+                  Halaman Pengaturan Pengguna, konfigurasi Firebase, dan manajemen basis data {institution.shortName} hanya dapat diakses oleh Admin Sarpras.
                 </p>
                 <button
                   onClick={handleRequireAdminAuth}
@@ -854,12 +858,12 @@ export default function App() {
         <footer className="mt-auto border-t border-[#dae4f3] bg-[#f0f4fa]/80 backdrop-blur-md py-6 px-4 sm:px-8 text-xs text-slate-500">
           <div className="max-w-[1500px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
             <div className="flex items-center gap-2 font-medium">
-              <span className="font-bold text-slate-800">SarprasHub · SMKN 6 Tebo</span>
+              <span className="font-bold text-slate-800">SarprasHub · {institution.shortName}</span>
               <span>•</span>
-              <span>Jl. Garuda RT. 15 / RW. 07, Sapta Mulia, Rimbo Bujang, Kab. Tebo</span>
+              <span>{institution.address}</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              © {new Date().getFullYear()} SMK Negeri 6 Tebo (NPSN 10508365) • Layanan Peminjaman Sarpras Digital.
+              © {new Date().getFullYear()} {institution.name} (NPSN {institution.npsn}) • Layanan Peminjaman Sarpras Digital.
             </p>
           </div>
         </footer>

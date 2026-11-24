@@ -12,6 +12,7 @@ import {
 import confetti from 'canvas-confetti';
 import { SarprasItem, LoanRequest, LoanItemDetail } from '../types';
 import { validateLoanRequest, generateLoanCode } from '../utils/loanRules';
+import { institutionEmailDomain, useInstitutionProfile } from '../data/institution';
 
 interface LoanModalProps {
   isOpen: boolean;
@@ -28,6 +29,9 @@ export const LoanModal: React.FC<LoanModalProps> = ({
   preSelectedItem,
   onSubmitLoan,
 }) => {
+  const institution = useInstitutionProfile();
+  const schoolEmailDomain = institutionEmailDomain(institution);
+
   // Form State
   const [borrowerName, setBorrowerName] = useState('');
   const [borrowerRole, setBorrowerRole] = useState<'Guru' | 'Staf' | 'Siswa' | 'Tamu / Umum'>('Guru');
@@ -150,7 +154,7 @@ export const LoanModal: React.FC<LoanModalProps> = ({
       borrowerRole,
       borrowerNipOrId: borrowerNipOrId.trim(),
       borrowerPhone: borrowerPhone.trim(),
-      borrowerEmail: borrowerEmail.trim() || `${borrowerName.toLowerCase().replace(/\s+/g, '.')}@smkn6tebo.sch.id`,
+      borrowerEmail: borrowerEmail.trim() || `${borrowerName.toLowerCase().replace(/\s+/g, '.')}@${schoolEmailDomain}`,
       departmentOrClass: departmentOrClass.trim() || 'Umum',
       purpose: purpose.trim(),
       items: selectedItems,
@@ -269,7 +273,11 @@ export const LoanModal: React.FC<LoanModalProps> = ({
                   required
                   value={departmentOrClass}
                   onChange={(e) => setDepartmentOrClass(e.target.value)}
-                  placeholder="Contoh: Guru TBSM / XII DKV 1 / OTKP / AKL"
+                  placeholder={
+                    institution.departments.length > 0
+                      ? `Contoh: Guru ${institution.departments[0]} / XII ${institution.departments[institution.departments.length - 1]} 1`
+                      : 'Contoh: Guru / XII DKV 1'
+                  }
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 text-slate-900 border border-slate-200 focus:bg-white focus:border-indigo-500 text-xs sm:text-sm outline-none"
                 />
               </div>
@@ -299,7 +307,7 @@ export const LoanModal: React.FC<LoanModalProps> = ({
                   type="email"
                   value={borrowerEmail}
                   onChange={(e) => setBorrowerEmail(e.target.value)}
-                  placeholder="nama@smkn6tebo.sch.id"
+                  placeholder={`nama@${schoolEmailDomain}`}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 text-slate-900 border border-slate-200 focus:bg-white focus:border-indigo-500 text-xs sm:text-sm outline-none"
                 />
               </div>

@@ -27,6 +27,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { SarprasItem, LoanRequest, AppNotification } from '../types';
+import { useInstitutionProfile } from '../data/institution';
 
 interface DashboardOverviewProps {
   items: SarprasItem[];
@@ -54,6 +55,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   const [filterTab, setFilterTab] = useState<'all' | 'active' | 'pending' | 'maintenance'>('all');
   const [tableSearch, setTableSearch] = useState('');
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
+  const institution = useInstitutionProfile();
 
   // Calculation Metrics
   const totalItemsCount = items.reduce((acc, itm) => acc + itm.totalQuantity, 0);
@@ -110,11 +112,13 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2">
               <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {isAdmin ? 'Selamat Datang, Admin Sarpras SMKN 6 Tebo 👋' : 'Selamat Datang di Sarpras SMKN 6 Tebo 👋'}
+                {isAdmin
+                  ? `Selamat Datang, Admin Sarpras ${institution.shortName} 👋`
+                  : `Selamat Datang di Sarpras ${institution.shortName} 👋`}
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-medium">
-              Pantauan terkini ketersediaan sarana prasarana SMK Negeri 6 Tebo (Rimbo Bujang, Kab. Tebo), status sirkulasi permohonan, dan jadwal peminjaman ruang praktik maupun aula hari ini.
+              Pantauan terkini ketersediaan sarana prasarana {institution.name} ({institution.district}, {institution.regency}), status sirkulasi permohonan, dan jadwal peminjaman ruang praktik maupun aula hari ini.
             </p>
           </div>
 
@@ -128,8 +132,8 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
                   <div className="w-14 h-6 border-b-3 border-slate-800 rounded-b-full transform rotate-[-4deg] relative">
                     <div className="absolute right-0 bottom-[-4px] w-2 h-2 border-r-3 border-b-3 border-slate-800 transform rotate-[45deg]" />
                   </div>
-                  <span className="text-[8px] font-black tracking-wider text-amber-900/75 uppercase mt-2">
-                    SMKN 6 TEBO
+                  <span className="text-[8px] font-black tracking-wider text-amber-900/75 uppercase mt-2 text-center leading-tight px-1">
+                    {institution.shortName}
                   </span>
                 </div>
               </div>

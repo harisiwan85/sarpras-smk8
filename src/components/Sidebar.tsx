@@ -16,6 +16,7 @@ import {
   ChevronRight,
   ExternalLink,
 } from 'lucide-react';
+import { useInstitutionProfile } from '../data/institution';
 
 interface SidebarProps {
   currentTab: string;
@@ -36,6 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   pendingLoansCount,
   totalInventoryCount,
 }) => {
+  const institution = useInstitutionProfile();
   const menuItems = [
     {
       id: 'dashboard',
@@ -126,7 +128,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 v2.8
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 font-medium">SMKN 6 Tebo · Rimbo Bujang</p>
+            <p className="text-[11px] text-slate-500 font-medium">{institution.shortName} · {institution.district}</p>
           </div>
         </div>
 

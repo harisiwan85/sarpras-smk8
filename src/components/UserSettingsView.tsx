@@ -37,6 +37,7 @@ import {
   DEFAULT_INSTITUTION_PROFILE,
   getInstitutionProfile,
   saveInstitutionProfile,
+  resetInstitutionProfile,
 } from '../data/institution';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 
@@ -113,7 +114,17 @@ export const UserSettingsView: React.FC<UserSettingsViewProps> = ({
   const [autoEmailNotify, setAutoEmailNotify] = useState(true);
   const initialProfile = getInstitutionProfile();
   const [instituteName, setInstituteName] = useState(initialProfile.name);
+  const [instituteShortName, setInstituteShortName] = useState(initialProfile.shortName);
+  const [instituteNpsn, setInstituteNpsn] = useState(initialProfile.npsn);
   const [instituteAddress, setInstituteAddress] = useState(initialProfile.address);
+  const [instituteDistrict, setInstituteDistrict] = useState(initialProfile.district);
+  const [instituteRegency, setInstituteRegency] = useState(initialProfile.regency);
+  const [instituteProvince, setInstituteProvince] = useState(initialProfile.province);
+  const [institutePostalCode, setInstitutePostalCode] = useState(initialProfile.postalCode);
+  const [instituteEmailDomain, setInstituteEmailDomain] = useState(initialProfile.emailDomain);
+  const [instituteDepartments, setInstituteDepartments] = useState(
+    initialProfile.departments.join('\n')
+  );
   const [principalName, setPrincipalName] = useState(initialProfile.principalName);
   const [sarprasHeadName, setSarprasHeadName] = useState(initialProfile.sarprasHeadName);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -252,11 +263,46 @@ export const UserSettingsView: React.FC<UserSettingsViewProps> = ({
     e.preventDefault();
     saveInstitutionProfile({
       name: instituteName.trim() || DEFAULT_INSTITUTION_PROFILE.name,
-      shortName: instituteName.trim().replace(/^SMK\s+Negeri\s+/i, 'SMKN ') || DEFAULT_INSTITUTION_PROFILE.shortName,
+      shortName: instituteShortName.trim() || instituteName.trim() || DEFAULT_INSTITUTION_PROFILE.shortName,
+      npsn: instituteNpsn.trim() || DEFAULT_INSTITUTION_PROFILE.npsn,
       address: instituteAddress.trim() || DEFAULT_INSTITUTION_PROFILE.address,
+      district: instituteDistrict.trim() || DEFAULT_INSTITUTION_PROFILE.district,
+      regency: instituteRegency.trim() || DEFAULT_INSTITUTION_PROFILE.regency,
+      province: instituteProvince.trim() || DEFAULT_INSTITUTION_PROFILE.province,
+      postalCode: institutePostalCode.trim() || DEFAULT_INSTITUTION_PROFILE.postalCode,
+      emailDomain: instituteEmailDomain.trim().replace(/^@/, '') || DEFAULT_INSTITUTION_PROFILE.emailDomain,
+      departments: instituteDepartments
+        .split('\n')
+        .map((d) => d.trim())
+        .filter(Boolean),
       principalName: principalName.trim() || DEFAULT_INSTITUTION_PROFILE.principalName,
       sarprasHeadName: sarprasHeadName.trim() || DEFAULT_INSTITUTION_PROFILE.sarprasHeadName,
     });
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 3000);
+  };
+
+  const handleResetInstitution = () => {
+    if (
+      !window.confirm(
+        'Kembalikan seluruh identitas lembaga (nama, NPSN, alamat, kepala sekolah, waka sarpras, email, dan jurusan) ke profil bawaan sekolah?'
+      )
+    ) {
+      return;
+    }
+    const profile = resetInstitutionProfile();
+    setInstituteName(profile.name);
+    setInstituteShortName(profile.shortName);
+    setInstituteNpsn(profile.npsn);
+    setInstituteAddress(profile.address);
+    setInstituteDistrict(profile.district);
+    setInstituteRegency(profile.regency);
+    setInstituteProvince(profile.province);
+    setInstitutePostalCode(profile.postalCode);
+    setInstituteEmailDomain(profile.emailDomain);
+    setInstituteDepartments(profile.departments.join('\n'));
+    setPrincipalName(profile.principalName);
+    setSarprasHeadName(profile.sarprasHeadName);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
@@ -615,38 +661,55 @@ export const UserSettingsView: React.FC<UserSettingsViewProps> = ({
           >
             <div>
               <h3 className="text-base font-extrabold text-slate-900">
-                Profil & Preferensi Lembaga ({DEFAULT_INSTITUTION_PROFILE.shortName})
+                Profil &amp; Preferensi Lembaga
               </h3>
               <p className="text-xs text-slate-500 font-normal mt-0.5">
-                Informasi ini tersimpan otomatis dan ditampilkan pada cetak kartu peminjaman PDF resmi serta label barcode aset.
+                Informasi ini tersimpan otomatis dan dipakai pada kop aplikasi, cetak kartu peminjaman PDF resmi,
+                label barcode aset, serta email bawaan peminjam.
               </p>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-slate-500 mt-1.5">
                 <span className="font-mono tabular-nums font-semibold text-slate-700">
-                  NPSN {DEFAULT_INSTITUTION_PROFILE.npsn}
+                  NPSN {instituteNpsn || DEFAULT_INSTITUTION_PROFILE.npsn}
                 </span>
                 <span aria-hidden="true">·</span>
-                <span>Kompetensi: TBSM · DKV · OTKP · AKL</span>
+                <span>{instituteDistrict}, {instituteRegency}</span>
               </div>
             </div>
 
             {savedSuccess && (
               <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Profil SMKN 6 Tebo &amp; preferensi berhasil disimpan.</span>
+                <span>Profil {instituteShortName || instituteName} &amp; preferensi berhasil disimpan.</span>
               </div>
             )}
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Nama Instansi / Sekolah:
-                </label>
-                <input
-                  type="text"
-                  value={instituteName}
-                  onChange={(e) => setInstituteName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Nama Instansi / Sekolah:
+                  </label>
+                  <input
+                    type="text"
+                    value={instituteName}
+                    onChange={(e) => setInstituteName(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.name}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Nama Singkat (Sidebar, Kop &amp; Label):
+                  </label>
+                  <input
+                    type="text"
+                    value={instituteShortName}
+                    onChange={(e) => setInstituteShortName(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.shortName}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
               </div>
 
               <div>
@@ -657,7 +720,96 @@ export const UserSettingsView: React.FC<UserSettingsViewProps> = ({
                   type="text"
                   value={instituteAddress}
                   onChange={(e) => setInstituteAddress(e.target.value)}
+                  placeholder={DEFAULT_INSTITUTION_PROFILE.address}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">NPSN:</label>
+                  <input
+                    type="text"
+                    value={instituteNpsn}
+                    onChange={(e) => setInstituteNpsn(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.npsn}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Kecamatan:</label>
+                  <input
+                    type="text"
+                    value={instituteDistrict}
+                    onChange={(e) => setInstituteDistrict(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.district}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Kabupaten/Kota:</label>
+                  <input
+                    type="text"
+                    value={instituteRegency}
+                    onChange={(e) => setInstituteRegency(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.regency}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Provinsi:</label>
+                  <input
+                    type="text"
+                    value={instituteProvince}
+                    onChange={(e) => setInstituteProvince(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.province}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Kode Pos:</label>
+                  <input
+                    type="text"
+                    value={institutePostalCode}
+                    onChange={(e) => setInstitutePostalCode(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.postalCode}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Domain Email Sekolah:
+                  </label>
+                  <input
+                    type="text"
+                    value={instituteEmailDomain}
+                    onChange={(e) => setInstituteEmailDomain(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.emailDomain}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Dipakai sebagai email bawaan &amp; placeholder formulir peminjaman.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Kompetensi Keahlian / Jurusan (satu per baris):
+                </label>
+                <textarea
+                  rows={4}
+                  value={instituteDepartments}
+                  onChange={(e) => setInstituteDepartments(e.target.value)}
+                  placeholder={DEFAULT_INSTITUTION_PROFILE.departments.join('\n')}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-y"
                 />
               </div>
 
@@ -670,6 +822,7 @@ export const UserSettingsView: React.FC<UserSettingsViewProps> = ({
                     type="text"
                     value={principalName}
                     onChange={(e) => setPrincipalName(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.principalName}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
@@ -682,6 +835,7 @@ export const UserSettingsView: React.FC<UserSettingsViewProps> = ({
                     type="text"
                     value={sarprasHeadName}
                     onChange={(e) => setSarprasHeadName(e.target.value)}
+                    placeholder={DEFAULT_INSTITUTION_PROFILE.sarprasHeadName}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
@@ -729,7 +883,16 @@ export const UserSettingsView: React.FC<UserSettingsViewProps> = ({
               </div>
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={handleResetInstitution}
+                className="px-4 py-2.5 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 text-xs font-bold border border-slate-200 transition-colors cursor-pointer flex items-center justify-center gap-2"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Kembalikan Profil Bawaan Sekolah</span>
+              </button>
+
               <button
                 type="submit"
                 className="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/25 transition-all cursor-pointer"

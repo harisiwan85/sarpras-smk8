@@ -1,8 +1,10 @@
-# SarprasHub SMKN 6 Tebo — Sistem Manajemen Peminjaman Sarana & Prasarana
+# SarprasHub SMK Muhammadiyah 8 Paciran — Sistem Manajemen Peminjaman Sarana & Prasarana
 
-**SarprasHub** adalah aplikasi web manajemen peminjaman sarana, prasarana, dan inventaris resmi **SMK Negeri 6 Tebo** (Jl. Garuda RT. 15 / RW. 07, Desa Sapta Mulia, Kec. Rimbo Bujang, Kab. Tebo, Jambi 37553 · NPSN `10508365`) berbasis **React 19**, **Vite**, **Tailwind CSS v4**, dan **Firebase Cloud Firestore** (`sarprashub-79e88`).
+**SarprasHub** adalah aplikasi web manajemen peminjaman sarana, prasarana, dan inventaris resmi **SMK Muhammadiyah 8 Paciran** (Jl. Raya Daendels Km. 74,2, Karangasem, Kec. Paciran, Kab. Lamongan, Jawa Timur 62264 · NPSN `20506243`) berbasis **React 19**, **Vite**, **Tailwind CSS v4**, dan **Firebase Cloud Firestore** (`sarprashub-79e88`).
 
 Menu **Pengaturan Pengguna** dan tombol unduh paket ZIP disembunyikan bagi pengunjung umum dan hanya tampil setelah login sebagai **Admin**.
+
+Seluruh identitas sekolah — nama, nama singkat, NPSN, alamat, kecamatan, kabupaten, provinsi, kode pos, kepala sekolah, waka sarpras, domain email, dan daftar jurusan — dikelola dari satu tempat pada menu **Pengaturan Pengguna ➔ Profil & Preferensi Lembaga**, lalu otomatis dipakai di sidebar, kop dasbor, footer, kartu peminjaman PDF, label barcode aset, dan formulir peminjaman.
 
 Paket kode ini sudah disusun lengkap agar siap diunggah ke **GitHub** melalui browser tanpa perintah CMD/PowerShell, lalu ditayangkan **online 24 jam** di **Vercel** maupun **Firebase Hosting**.
 
