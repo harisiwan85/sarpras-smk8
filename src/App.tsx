@@ -321,7 +321,7 @@ export default function App() {
           const updatedLoan: LoanRequest = {
             ...loan,
             status: 'Disetujui',
-            approvedBy: 'Admin Sarpras',
+            approvedBy: institution.sarprasHeadName,
             approvedAt: `${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`,
             adminNotes: adminNotes || loan.adminNotes,
           };

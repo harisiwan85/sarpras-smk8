@@ -14,7 +14,7 @@ import {
 import { LoanRequest } from '../types';
 import { formatIndonesianDate } from '../utils/loanRules';
 import { downloadLoanCardPDF } from '../utils/pdfGenerator';
-import { getInstitutionProfile } from '../data/institution';
+import { getInstitutionProfile, resolveSarprasSigner } from '../data/institution';
 
 interface LoanCardPreviewModalProps {
   loan: LoanRequest | null;
@@ -27,6 +27,7 @@ export const LoanCardPreviewModal: React.FC<LoanCardPreviewModalProps> = ({
 }) => {
   if (!loan) return null;
   const institution = getInstitutionProfile();
+  const sarprasSigner = resolveSarprasSigner(institution, loan.approvedBy);
 
   return (
     <div
@@ -221,7 +222,7 @@ export const LoanCardPreviewModal: React.FC<LoanCardPreviewModalProps> = ({
             <div className="text-center w-40">
               <span className="block text-[11px] text-slate-500 mb-10">Petugas Sarpras,</span>
               <span className="font-bold text-slate-900 block border-b border-slate-400 pb-0.5">
-                {loan.approvedBy || 'Admin Sarpras'}
+                {sarprasSigner}
               </span>
               <span className="text-[10px] text-slate-500">Pengelola Aset</span>
             </div>

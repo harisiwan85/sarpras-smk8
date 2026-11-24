@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { SarprasItem, LoanRequest } from '../types';
 import { calculateInventoryStats } from '../utils/loanRules';
+import { useInstitutionProfile, resolveSarprasSigner } from '../data/institution';
 
 interface ReportsDashboardProps {
   items: SarprasItem[];
@@ -19,6 +20,7 @@ interface ReportsDashboardProps {
 
 export const ReportsDashboard: React.FC<ReportsDashboardProps> = ({ items, loans }) => {
   const [timeRange, setTimeRange] = useState<'all' | 'month' | 'week'>('all');
+  const institution = useInstitutionProfile();
 
   const stats = calculateInventoryStats(items, loans);
 
@@ -325,7 +327,9 @@ export const ReportsDashboard: React.FC<ReportsDashboardProps> = ({ items, loans
                     </span>
                   </td>
                   <td className="py-3 px-4 text-slate-600">
-                    {loan.approvedBy || '-'}
+                    {loan.approvedBy
+                      ? resolveSarprasSigner(institution, loan.approvedBy)
+                      : '-'}
                   </td>
                 </tr>
               ))}

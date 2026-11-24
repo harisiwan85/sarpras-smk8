@@ -124,6 +124,32 @@ export function institutionEmailDomain(profile: InstitutionProfile): string {
 }
 
 /**
+ * Nama penanggung jawab sarpras yang tampil sebagai penanda tangan resmi
+ * (kartu peminjaman, PDF, dan laporan). Selalu mengikuti halaman Pengaturan.
+ *
+ * `approvedBy` lama tetap dihormati bila sudah berisi nama orang, tetapi nilai
+ * generik warisan seperti "Admin Sarpras" atau "Waka Sarpras <sekolah lama>"
+ * diganti dengan nama dari Pengaturan agar dokumen tidak pernah menampilkan
+ * jabatan tanpa nama.
+ */
+export function resolveSarprasSigner(
+  profile: InstitutionProfile,
+  approvedBy?: string | null
+): string {
+  const stored = approvedBy?.trim();
+  if (!stored) return profile.sarprasHeadName;
+
+  const normalized = stored.toLowerCase();
+  const isGenericPlaceholder =
+    normalized === 'admin sarpras' ||
+    normalized === 'waka sarpras' ||
+    normalized.startsWith('admin sarpras ') ||
+    normalized.startsWith('waka sarpras ');
+
+  return isGenericPlaceholder ? profile.sarprasHeadName : stored;
+}
+
+/**
  * Hook reaktif: otomatis memperbarui semua komponen ketika profil lembaga
  * disimpan dari halaman Pengaturan, termasuk sinkron antar tab browser.
  */

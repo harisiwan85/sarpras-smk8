@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import { LoanRequest } from '../types';
 import { formatIndonesianDate } from './loanRules';
-import { getInstitutionProfile } from '../data/institution';
+import { getInstitutionProfile, resolveSarprasSigner } from '../data/institution';
 
 export function generateLoanCardPDF(loan: LoanRequest): jsPDF {
   const institution = getInstitutionProfile();
@@ -232,7 +232,7 @@ export function generateLoanCardPDF(loan: LoanRequest): jsPDF {
   doc.setFontSize(9);
   doc.setTextColor(...darkTextColor);
   doc.text(`( ${loan.borrowerName} )`, colLeft, currentY + 6);
-  doc.text(`( ${loan.approvedBy || institution.sarprasHeadName} )`, colRight, currentY + 6);
+  doc.text(`( ${resolveSarprasSigner(institution, loan.approvedBy)} )`, colRight, currentY + 6);
 
   // Footer note
   doc.setFont('helvetica', 'italic');
