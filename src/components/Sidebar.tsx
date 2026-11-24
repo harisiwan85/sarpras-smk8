@@ -8,7 +8,6 @@ import {
   BarChart3,
   Settings,
   Lock,
-  Boxes,
   Sparkles,
   ShieldCheck,
   User,
@@ -17,6 +16,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useInstitutionProfile } from '../data/institution';
+import { SchoolLogo } from './SchoolLogo';
 
 interface SidebarProps {
   currentTab: string;
@@ -114,12 +114,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => setCurrentTab('dashboard')}
           className="flex items-center gap-3 cursor-pointer group px-2 py-1"
         >
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 p-0.5 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-all">
-            <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
-              <Boxes className="w-5 h-5 text-blue-600" />
-            </div>
-          </div>
-          <div>
+          <SchoolLogo size={44} className="group-hover:scale-105 transition-transform duration-300" alt={`Logo ${institution.name}`} />
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <span className="font-black text-xl tracking-tight text-slate-900">
                 Sarpras<span className="text-blue-600">Hub</span>
@@ -128,7 +124,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 v2.8
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 font-medium">{institution.shortName} · {institution.district}</p>
+            <p className="text-[11px] text-slate-500 font-medium leading-snug line-clamp-2" title={institution.name}>
+              {institution.shortName}
+            </p>
           </div>
         </div>
 

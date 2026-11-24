@@ -15,6 +15,7 @@ import { LoanRequest } from '../types';
 import { formatIndonesianDate } from '../utils/loanRules';
 import { downloadLoanCardPDF } from '../utils/pdfGenerator';
 import { getInstitutionProfile, resolveSarprasSigner } from '../data/institution';
+import { SchoolLogo } from './SchoolLogo';
 
 interface LoanCardPreviewModalProps {
   loan: LoanRequest | null;
@@ -71,22 +72,25 @@ export const LoanCardPreviewModal: React.FC<LoanCardPreviewModalProps> = ({
         {/* Printable Card Container */}
         <div className="p-6 sm:p-8 space-y-6 bg-slate-50 border-b border-slate-200" id="printable-loan-card">
           {/* Institution Header */}
-          <div className="flex items-start justify-between pb-4 border-b-2 border-indigo-900">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-black text-indigo-950 tracking-tight">
-                  {institution.name.toUpperCase()}
-                </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">
-                  NPSN {institution.npsn}
-                </span>
+          <div className="flex items-start justify-between pb-4 border-b-2 border-indigo-900 gap-4">
+            <div className="flex items-start gap-3">
+              <SchoolLogo size={52} framed={false} alt={`Logo ${institution.name}`} />
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xl font-black text-indigo-950 tracking-tight">
+                    {institution.name.toUpperCase()}
+                  </span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">
+                    NPSN {institution.npsn}
+                  </span>
+                </div>
+                <h2 className="text-xs font-bold text-slate-600 mt-0.5">
+                  DIVISI PENGELOLAAN SARANA, PRASARANA &amp; INVENTARIS · SARPRASHUB
+                </h2>
+                <p className="text-[11px] text-slate-500">
+                  {institution.address}
+                </p>
               </div>
-              <h2 className="text-xs font-bold text-slate-600 mt-0.5">
-                DIVISI PENGELOLAAN SARANA, PRASARANA &amp; INVENTARIS · SARPRASHUB
-              </h2>
-              <p className="text-[11px] text-slate-500">
-                {institution.address}
-              </p>
             </div>
 
             <div className="text-right">

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { SarprasItem } from '../types';
 import { getInstitutionProfile } from '../data/institution';
+import { SchoolLogo } from './SchoolLogo';
 
 interface InventoryLabelModalProps {
   isOpen: boolean;
@@ -191,17 +192,20 @@ export const InventoryLabelModal: React.FC<InventoryLabelModalProps> = ({
                   style={{ minHeight: labelSize === 'standard' ? '190px' : '150px' }}
                 >
                   {/* Top Header */}
-                  <div className="border-b-2 border-slate-800 pb-2 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded bg-blue-600 text-white flex items-center justify-center font-black text-[10px]">
-                        S
+                  <div className="border-b-2 border-slate-800 pb-2 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <SchoolLogo size={20} framed={false} alt={`Logo ${institution.name}`} />
+                      <div className="min-w-0">
+                        <span className="block font-extrabold text-[10px] leading-tight tracking-wide text-slate-900 uppercase">
+                          MILIK {institution.shortName.toUpperCase()}
+                        </span>
+                        <span className="block text-[8px] font-bold tracking-widest text-slate-500 uppercase">
+                          SarprasHub
+                        </span>
                       </div>
-                      <span className="font-extrabold text-[11px] tracking-wider text-slate-900 uppercase">
-                        MILIK {institution.shortName.toUpperCase()} · SARPRASHUB
-                      </span>
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300">
-                      {item.type === 'barang' ? 'BARANG INVENTARIS' : 'RUANG / FASILITAS'}
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 shrink-0 leading-tight text-center">
+                      {item.type === 'barang' ? 'BARANG' : 'RUANG'}
                     </span>
                   </div>
 

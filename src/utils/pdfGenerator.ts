@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import { LoanRequest } from '../types';
 import { formatIndonesianDate } from './loanRules';
 import { getInstitutionProfile, resolveSarprasSigner } from '../data/institution';
+import { SCHOOL_LOGO_DATA_URI } from '../assets/schoolLogoData';
 
 export function generateLoanCardPDF(loan: LoanRequest): jsPDF {
   const institution = getInstitutionProfile();
@@ -24,20 +25,36 @@ export function generateLoanCardPDF(loan: LoanRequest): jsPDF {
   doc.setFillColor(...primaryColor);
   doc.roundedRect(15, 15, pageWidth - 30, 32, 3, 3, 'F');
 
+  // School Logo (white plate so the emblem stays legible on the dark banner)
+  const logoSize = 20;
+  const logoX = 19;
+  const logoY = 21;
+  try {
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(logoX - 1.5, logoY - 1.5, logoSize + 3, logoSize + 3, 2, 2, 'F');
+    doc.addImage(SCHOOL_LOGO_DATA_URI, 'PNG', logoX, logoY, logoSize, logoSize);
+  } catch {
+    // Logo bersifat dekoratif: dokumen tetap dibuat bila gambar gagal dimuat.
+  }
+
+  const textX = logoX + logoSize + 6;
+
   // Institution & Card Title
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(14);
-  doc.text(`SARPRASHUB - ${institution.name.toUpperCase()}`, 22, 25);
+  doc.setFontSize(13);
+  doc.text(`SARPRASHUB - ${institution.name.toUpperCase()}`, textX, 25, {
+    maxWidth: pageWidth - textX - 52,
+  });
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
   doc.setTextColor(226, 232, 240);
-  doc.text(`DIVISI SARANA & PRASARANA · NPSN ${institution.npsn}`, 22, 31.5);
+  doc.text(`DIVISI SARANA & PRASARANA · NPSN ${institution.npsn}`, textX, 31.5);
   doc.setFontSize(7.5);
-  doc.text(institution.address, 22, 37);
+  doc.text(institution.address, textX, 37, { maxWidth: pageWidth - textX - 18 });
   doc.setFontSize(8.5);
-  doc.text('Kartu Bukti Izin Pengambilan & Peminjaman Resmi', 22, 42.5);
+  doc.text('Kartu Bukti Izin Pengambilan & Peminjaman Resmi', textX, 42.5);
 
   // Status Badge Pill on Header right
   doc.setFillColor(16, 185, 129); // Emerald 500

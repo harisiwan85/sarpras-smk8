@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  ShieldAlert,
   Lock,
   User,
   Eye,
@@ -11,6 +10,8 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { verifyAdminCredentials } from '../utils/auth';
+import { useInstitutionProfile } from '../data/institution';
+import { SchoolLogo } from './SchoolLogo';
 
 interface AdminLoginModalProps {
   isOpen: boolean;
@@ -29,6 +30,8 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const institution = useInstitutionProfile();
 
   if (!isOpen) return null;
 
@@ -63,12 +66,12 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
         <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white p-6 relative">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-xs">
-                <ShieldAlert className="w-6 h-6 text-amber-300" />
+              <div className="w-12 h-12 rounded-2xl bg-white p-1 shadow-lg shadow-black/20 flex items-center justify-center">
+                <SchoolLogo size={40} framed={false} alt={`Logo ${institution.name}`} />
               </div>
               <div>
                 <h3 className="font-bold text-lg text-white">Otorisasi Petugas Admin</h3>
-                <p className="text-xs text-indigo-100">Kunci Keamanan Sistem SarprasHub</p>
+                <p className="text-xs text-indigo-100">{institution.shortName}</p>
               </div>
             </div>
             <button
